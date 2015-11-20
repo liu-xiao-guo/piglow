@@ -1,0 +1,16 @@
+name: piglow
+version: 1.0
+vendor: XiaoGuo, Liu <xiaoguo.liu@canonical.com>
+summary: Piglow API
+description: This is the webserver API to control the piglow
+icon: icon.png
+
+services:
+  piglow2:
+    start: bin/piglow
+
+parts:
+  piglow:
+    plugin: go
+    source: ./src/piglow
+
