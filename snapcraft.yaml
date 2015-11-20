@@ -6,8 +6,11 @@ description: This is the webserver API to control the piglow
 icon: icon.png
 
 services:
-  piglow2:
+  piglow:
     start: bin/piglow
+    caps:
+     - network-client
+     - network-service    
 
 parts:
   piglow:
