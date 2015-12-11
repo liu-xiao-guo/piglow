@@ -14,6 +14,7 @@ var m *martini.Martini
 
 const (
 	FORM_INTENSITY = "intensity"
+	FORM_INTERVAL = "interval"	
 )
 
 func init() {
@@ -33,7 +34,9 @@ func init() {
 	r.Post(`/:version/colors/:id`, SetGlowColor)
 	r.Post(`/:version/legs/:id`, SetLeg)
 	r.Post(`/:version/legs/:id/colors/:colid`, SetLed)
-
+	r.Post(`/:version/fan/:num`, SetFan)
+	r.Post(`/:version/fade/:num`, SetFade)
+	
 	// Add the router action
 	m.Action(r.Handle)
 }

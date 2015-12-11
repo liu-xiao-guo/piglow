@@ -8,10 +8,81 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func GlowOff() {
 	piglow.ShutDown()
+}
+
+func SetFan(res http.ResponseWriter, req *http.Request, parms martini.Params) (int, string) {
+	numstr := parms["num"]
+	num, _ := strconv.ParseInt(numstr, 10, 64)
+
+	fmt.Println("Going to set fan!")
+	
+	intervalstr := req.FormValue(FORM_INTERVAL)
+	if intervalstr == "" {
+		intervalstr = "500"
+	}
+	interval, _ := strconv.ParseInt(intervalstr, 10, 64)
+	
+	GlowOff();
+	
+	// piglow.ShutDown()
+	for i := 0; i < int(num); i++ {
+		// turn off all of the lights
+		GlowOff()
+		setLegOn(i%3, 0.3)
+		// Sleep for a while
+		time.Sleep(time.Duration(interval) * time.Millisecond)
+	}
+	
+	return 200, "set fan " + numstr + "\n"
+}
+
+func SetFade(res http.ResponseWriter, req *http.Request, parms martini.Params) (int, string) {
+	numstr := parms["num"]
+	num, _ := strconv.ParseInt(numstr, 10, 64)
+
+	fmt.Println("Going to set fan!")
+	
+	intensity := req.FormValue(FORM_INTENSITY)
+	if intensity == "" {
+		intensity = "0.5"
+	}	
+	brightness, _ := strconv.ParseFloat(intensity, 64)
+	
+	intervalstr := req.FormValue(FORM_INTERVAL)
+	if intervalstr == "" {
+		intervalstr = "500"
+	}
+	interval, _ := strconv.ParseInt(intervalstr, 10, 64)
+		
+	colors := []string{"white", "blue", "green", "yellow", "orange", "red"}
+	
+	GlowOff();
+	
+	// piglow.ShutDown()
+	for i := 0; i < int(num); i++ {
+		// turn off all of the lights
+		
+		for j := 0; j < 6; j ++ {
+			err := glowToColor(getColorFromString(colors[j]), brightness)
+			
+			if err != nil {
+				return 400, err.Error()
+			}
+			
+			time.Sleep(time.Duration(interval) * time.Millisecond)
+		}
+		
+		// Sleep for a while
+		time.Sleep(time.Duration(interval) * time.Millisecond)
+		GlowOff();
+	}
+	
+	return 200, "set fade " + numstr + " to intensity " + intensity + "\n"
 }
 
 func checkPiGlow() bool {
